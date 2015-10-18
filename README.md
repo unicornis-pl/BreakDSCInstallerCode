@@ -4,4 +4,4 @@ Adjust parameters in first lines of the file to match your configuration.
 
 Tested on Envisalink 4 and PC 5010. Passcode restored in 5 hours (26 combinations per minute).
 
-USE ON YOUR RISK, you can BRICK your panel.
+USE ON YOUR RISK, make sure scripts exits installer code when finally entered. Otherwise you can BRICK your panel.
