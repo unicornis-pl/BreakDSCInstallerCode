@@ -35,22 +35,22 @@ function breakCode ($startCode) {
    global $enterInstallerMode;
    global $stopTime;
    for ($code = $startCode;$code<10000;$code++) {
-	    echo ("Testing code: ".sprintf("%04d",$code)."\n");
-	    writeDSC("071".$enterInstallerMode.sprintf("%04d",$code));
+	echo ("Testing code: ".sprintf("%04d",$code)."\n");
+	writeDSC("071".$enterInstallerMode.sprintf("%04d",$code));
         $lastCode = $code;
         $loop = true;
         while ($loop) {  // Loop until receive Invalid access code or an Error message
             $lines = readData();
             foreach ($lines as $line) {
                 $res = readDSC($line);
-	            if ($res['code']==680) { // Entered installer mode - exit this mode and return
-	                echo "*** Installer mode entered using: ".$lastCode." ***\n";
+	        if ($res['code']==680) { // Entered installer mode - exit this mode and return
+	            echo "*** Installer mode entered using: ".$lastCode." ***\n";
                     $stopTime = microtime(true);
-	                sleep(4);
+	            sleep(4);
                     echo "Exiting installer mode, please wait couple of seconds to make sure control panel setup is not messed up!\n";
                     for ( $i=0; $i<50; $i++ ) {
                         writeDSC("070#");
-		                $results = readData();
+		        $results = readData();
                         foreach ($results as $result) {
                             $res = readDSC($result);
                             echo ("  ".$res['msg']."\n");
@@ -58,16 +58,16 @@ function breakCode ($startCode) {
                         }
                         sleep(4);
                     }
-	                return $lastCode;
-	            }
+	            return $lastCode;
+	        }
                 elseif ($res['code']==670) // Invalid access code
                     $loop = false;
-	            elseif ($res['code']==502) {
+	        elseif ($res['code']==502) {
                     $code--;               // Error, repeate check for this code.
                     sleep(1);
                     $loop = false;
                 }
-	            echo("  ".$res['msg']."\n");
+	        echo("  ".$res['msg']."\n");
             }
         }
     }
@@ -76,11 +76,11 @@ function breakCode ($startCode) {
 }
 
 function addCheckSum($msg) {
-	$checksum=0;
-	for ($i=0;$i<strlen($msg);$i++) {
-		$checksum+= ord($msg[$i]);
-		$checksum %= 256;
-	}
+    $checksum=0;
+    for ($i=0;$i<strlen($msg);$i++) {
+	$checksum+= ord($msg[$i]);
+	$checksum %= 256;
+   }
     $checksumStr = strtoupper(sprintf("%02x",$checksum));
     return $msg.$checksumStr.chr(13).chr(10);
 }
@@ -93,10 +93,10 @@ function writeDSC($msg) {
 }
 
 function readData() {
-	global $socket;
+    global $socket;
     $retval = [];
-	$read = socket_read( $socket, 1024);
-	if( $read == false )
+    $read = socket_read( $socket, 1024);
+    if( $read == false )
 	    throw new Exception( sprintf( "Unable to read from socket: %s", socket_strerror( socket_last_error() ) ) );
     $lines = explode("\n",$read);
     foreach ($lines as $line)
@@ -106,8 +106,8 @@ function readData() {
 
 function readDSC($read) {
     $retcode = intval(substr($read,0,3));
-	$retcodedata=0;
-	switch ($retcode) {
+    $retcodedata=0;
+    switch ($retcode) {
 		case 500:   $msg="OK"; break;
 		case 501:   $msg="Error Command, bad checksum"; break;
 		case 502:   $msg="System error: ";
@@ -119,21 +119,21 @@ function readDSC($read) {
 				        case 3: $msg.="Transmit buffer overflow"; break;
 				        case 10:$msg.="Keybus Transmit Buffer Overrun"; break;
 				        case 11:$msg.="Keybus Transmit Time Timeout"; break;
-                        case 12:$msg.="Keybus Transmit Mode Timeout"; break;
-                        case 13:$msg.="Keybus Transmit Keystring Timeout"; break;
-                        case 14:$msg.="Keybus Interface Not Functioning (the TPI cannot communicate with the security system)"; break;
-                        case 15:$msg.="Keybus Busy (Attempting to Disarm or Arm with user code)"; break;
-                        case 16:$msg.="Keybus Busy – Lockout (The panel is currently in Keypad Lockout – too many disarm attempts)"; break;
-                        case 17:$msg.="Keybus Busy – Installers Mode (Panel is in installers mode, most functions are unavailable)"; break;
-                        case 18:$msg.="Keybus Busy – General Busy (The requested partition is busy)"; break;
-                        case 20:$msg.="APICommandSyntaxError"; break;
-                        case 21:$msg.="APICommandPartitionError(RequestedPartitionisoutofbounds)"; break;
-                        case 22:$msg.="APICommandNotSupported"; break;
-                        case 23:$msg.="APISystemNotArmed(sentinresponsetoadisarmcommand)"; break;
-                        case 24:$msg.="APISystemNotReadytoArm(systemiseithernot-secure,inexit-delay,oralreadyarmed)"; break;
-                        case 25:$msg.="APICommandInvalidLength"; break;
-                        case 26:$msg.="APIUserCodenotRequired"; break;
-                        case 27:$msg.="APIInvalidCharactersinCommand(noalphacharactersareallowedexceptforchecksum)"; break;
+                        		case 12:$msg.="Keybus Transmit Mode Timeout"; break;
+                        		case 13:$msg.="Keybus Transmit Keystring Timeout"; break;
+                        		case 14:$msg.="Keybus Interface Not Functioning (the TPI cannot communicate with the security system)"; break;
+                        		case 15:$msg.="Keybus Busy (Attempting to Disarm or Arm with user code)"; break;
+                        		case 16:$msg.="Keybus Busy – Lockout (The panel is currently in Keypad Lockout – too many disarm attempts)"; break;
+                        		case 17:$msg.="Keybus Busy – Installers Mode (Panel is in installers mode, most functions are unavailable)"; break;
+                        		case 18:$msg.="Keybus Busy – General Busy (The requested partition is busy)"; break;
+                        		case 20:$msg.="APICommandSyntaxError"; break;
+                        		case 21:$msg.="APICommandPartitionError(RequestedPartitionisoutofbounds)"; break;
+                        		case 22:$msg.="APICommandNotSupported"; break;
+                        		case 23:$msg.="APISystemNotArmed(sentinresponsetoadisarmcommand)"; break;
+                        		case 24:$msg.="APISystemNotReadytoArm(systemiseithernot-secure,inexit-delay,oralreadyarmed)"; break;
+                        		case 25:$msg.="APICommandInvalidLength"; break;
+                        		case 26:$msg.="APIUserCodenotRequired"; break;
+                        		case 27:$msg.="APIInvalidCharactersinCommand(noalphacharactersareallowedexceptforchecksum)"; break;
 				        default:$msg.= substr($read,3,3);break;
 			        }
 			        break;
@@ -145,20 +145,20 @@ function readDSC($read) {
 				        case 3: $msg="Password request";break;
 			        };
 			        break;
-    	case 609:   $msg="Zone open: ".substr($read,3,strlen($read)-6);break;
+    		case 609:   $msg="Zone open: ".substr($read,3,strlen($read)-6);break;
 		case 610:   $msg="Zone close: ".substr($read,3,strlen($read)-6);break;
-        case 650:   $msg="Partition ready: ".substr($read,3,strlen($read)-6);break;
+        	case 650:   $msg="Partition ready: ".substr($read,3,strlen($read)-6);break;
 		case 615:   $msg="Timer dump";break;
-    	case 510:   $msg= keypadState($read);break;
-        case 511:   $msg= keypadFlashState($read);break;
+    		case 510:   $msg= keypadState($read);break;
+        	case 511:   $msg= keypadFlashState($read);break;
 		case 670:   $msg="Invalid access code"; break;
-        case 922:   $msg="Installer code required";break;
+        	case 922:   $msg="Installer code required";break;
 		case 680: $msg="Installer mode entered"; break;
 		default:  $msg="Other: ".substr($read,0,strlen($read)-3);
 	}
 	$retval['code']= $retcode;
 	$retval['data']= $retcodedata;
-    $retval['msg']= $msg;
+       	$retval['msg']= $msg;
 	return $retval;
 }
 
